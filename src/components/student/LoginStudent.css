@@ -1,0 +1,31 @@
+/* loginStudent.css */
+.login-container {
+    display: flex;
+    justify-content: center; /* Yatay ortalama */
+    align-items: center; /* Dikey ortalama */
+    height: 100vh; /* Tam ekran yüksekliği */
+    background-color: #f0f0f0; /* Hafif arka plan rengi */
+  }
+  
+  .login-form {
+    width: 300px; /* Formun sabit genişliği */
+    padding: 20px; /* Form içi dolgu */
+    background-color: white; /* Beyaz arka plan */
+    border-radius: 10px; /* Köşelerin yuvarlanması */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
+    text-align: center; /* Metin ortalama */
+  }
+  
+  .form-group {
+    margin-bottom: 15px; /* Form alanları arasında boşluk */
+  }
+  
+  .form-control {
+    width: 100%; /* Genişliği tam ayarla */
+  }
+  
+  .btn {
+    width: 100%; /* Düğmenin tam genişliği */
+    padding: 10px; /* Düğme dolgu */
+  }
+  
