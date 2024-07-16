@@ -49,6 +49,7 @@ function LoginStudent() {
             placeholder="Enter Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required // Make email field required
           />
         </div>
         <div className="form-group">
@@ -59,6 +60,7 @@ function LoginStudent() {
             placeholder="Enter Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required // Make password field required
           />
         </div>
         <button type="submit" className="btn btn-primary">Login</button>

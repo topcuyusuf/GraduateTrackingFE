@@ -32,6 +32,8 @@ export default function Student() {
   });
 
   const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [fullNameError, setFullNameError] = useState('');
   const [imagePreview, setImagePreview] = useState('');
 
   const handleChange = (e) => {
@@ -42,6 +44,20 @@ export default function Student() {
         setEmailError('Invalid email format');
       } else {
         setEmailError('');
+      }
+    }
+    if (name === 'password') {
+      if (value.length < 6) {
+        setPasswordError('Password must be at least 6 characters');
+      } else {
+        setPasswordError('');
+      }
+    }
+    if (name === 'fullName') {
+      if (!value.trim()) {
+        setFullNameError('Full Name is required');
+      } else {
+        setFullNameError('');
       }
     }
     setStudentData({ ...studentData, [name]: value });
@@ -63,6 +79,20 @@ export default function Student() {
 
   const handleClick = async (e) => {
     e.preventDefault();
+
+    if (!studentData.email) {
+      setEmailError('Email is required');
+    }
+    if (!studentData.password) {
+      setPasswordError('Password is required');
+    }
+    if (!studentData.fullName) {
+      setFullNameError('Full Name is required');
+    }
+
+    if (emailError || passwordError || fullNameError || !studentData.email || !studentData.password || !studentData.fullName) {
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:8080/students/create", {
@@ -116,6 +146,8 @@ export default function Student() {
             onChange={handleChange}
             name="password"
             type="password"
+            error={!!passwordError}
+            helperText={passwordError}
           />
           <TextField
             id="fullName"
@@ -124,6 +156,8 @@ export default function Student() {
             value={studentData.fullName}
             onChange={handleChange}
             name="fullName"
+            error={!!fullNameError}
+            helperText={fullNameError}
           />
           <TextField
             id="studentNumber"
@@ -291,7 +325,7 @@ export default function Student() {
             name="interestedAreas"
           />
           <div style={{ margin: '20px 0' }}>
-            <label htmlFor="image">Chose profile photo</label>
+            <label htmlFor="image">Choose profile photo</label>
             <input
               type="file"
               accept="image/*"
@@ -307,7 +341,7 @@ export default function Student() {
             </Box>
           )}
           <div style={{ margin: '20px 0' }}>
-            <label htmlFor="cv">Chose CV file</label>
+            <label htmlFor="cv">Choose CV file</label>
             <input
               type="file"
               accept=".pdf"

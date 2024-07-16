@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, TextField } from '@mui/material';
+import { Container, Paper, Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
 
 export default function StudentList() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -22,10 +24,33 @@ export default function StudentList() {
     fetchStudents();
   }, []);
 
+  const handleDeleteStudent = async () => {
+    if (!studentToDelete) {
+      console.error('Student ID is undefined');
+      return;
+    }
+    
+    try {
+      await axios.delete(`http://localhost:8080/students/deleteStudent/${studentToDelete}`);
+      setStudents(students.filter(student => student.studentId !== studentToDelete));
+      setOpenDialog(false);
+    } catch (error) {
+      console.error('Error deleting student:', error);
+    }
+  };
+
+  const handleOpenDialog = (studentId) => {
+    setStudentToDelete(studentId);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   const filteredStudents = students.filter((student) =>
     student.fullName && student.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -38,7 +63,7 @@ export default function StudentList() {
   return (
     <Container>
       <Box mt={4}>
-        <h1>All Students</h1>
+        <h1>Graduated People List</h1>
         <TextField
           label="Search by Full Name"
           variant="outlined"
@@ -72,11 +97,12 @@ export default function StudentList() {
                 <TableCell>Interested Areas</TableCell>
                 <TableCell>Image</TableCell>
                 <TableCell>CV</TableCell>
+                <TableCell>Action</TableCell> {/* New column for actions */}
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredStudents.map((student) => (
-                <TableRow key={student.id}>
+                <TableRow key={student.studentId}>
                   <TableCell>{student.fullName}</TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.studentNumber}</TableCell>
@@ -102,12 +128,38 @@ export default function StudentList() {
                   <TableCell>
                     <a href={`data:application/pdf;base64,${student.cv}`} download="CV.pdf">Download CV</a>
                   </TableCell>
+                  <TableCell>
+                    <Button variant="contained" color="secondary" onClick={() => handleOpenDialog(student.studentId)}>
+                      Delete
+                    </Button>
+                  </TableCell> {/* Delete button */}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
+
+      {/* Confirmation dialog for deleting a student */}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this student?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteStudent} color="secondary">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

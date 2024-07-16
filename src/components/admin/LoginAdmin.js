@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginAdmin.css';
 
-function LoginAdmin() {
+function LoginAdmin({ setIsAdminLoggedIn }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ function LoginAdmin() {
       if (response.data.message === 'Username not exists') {
         alert('Username not exists');
       } else if (response.data.message === 'Login Success') {
+        setIsAdminLoggedIn(true); // Update admin login state
         navigate('/student-list'); // Navigate to the student list page
       } else {
         alert('Incorrect username and password combination');

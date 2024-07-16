@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Container, Paper, Box, TextField, Button, FormControlLabel, Switch } from '@mui/material';
+import { Container, Paper, Box, TextField, Button, FormControlLabel, Switch, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function Notification() {
   const navigate = useNavigate();
-  const paperStyle = { padding: '50px 30px', width: 600, margin: '20px auto' };
+  const paperStyle = { padding: '30px', width: 400, margin: '20px auto' };
 
   const [notificationData, setNotificationData] = useState({
     header: '',
     body: '',
     active: true
   });
+
+  const [openSnackbar, setOpenSnackbar] = useState(false); // State to control Snackbar visibility
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -31,6 +33,7 @@ export default function Notification() {
 
       if (response.ok) {
         console.log("New notification created");
+        setOpenSnackbar(true); // Open Snackbar on successful submit
         navigate('/notification');
       } else {
         console.error("Failed to create notification");
@@ -42,14 +45,19 @@ export default function Notification() {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
     <Container>
       <Paper elevation={3} style={paperStyle}>
-        <h1 style={{ color: 'blue' }}>Notification Registration</h1>
+        <h1 style={{ color: 'blue', marginBottom: '20px' }}>Notification Registration</h1>
         <Box
           component="form"
           sx={{
-            '& .MuiTextField-root': { m: 2 },
+            display: 'grid',
+            gap: '20px',
           }}
           noValidate
           autoComplete="off"
@@ -58,6 +66,7 @@ export default function Notification() {
             id="header"
             label="Header"
             variant="outlined"
+            fullWidth
             value={notificationData.header}
             onChange={handleChange}
             name="header"
@@ -66,11 +75,12 @@ export default function Notification() {
             id="body"
             label="Body"
             variant="outlined"
+            multiline
+            rows={4}
+            fullWidth
             value={notificationData.body}
             onChange={handleChange}
             name="body"
-            multiline
-            rows={4}
           />
           <FormControlLabel
             control={
@@ -83,11 +93,19 @@ export default function Notification() {
             }
             label="Active"
           />
-          <Button variant="contained" onClick={handleClick}>
+          <Button variant="contained" onClick={handleClick} fullWidth>
             Submit
           </Button>
         </Box>
       </Paper>
+
+      {/* Snackbar for notification */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000} // Adjust duration as needed
+        onClose={handleCloseSnackbar}
+        message="Notification created successfully!"
+      />
     </Container>
   );
 }
